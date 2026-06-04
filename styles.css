@@ -81,7 +81,7 @@ textarea { outline: none; }
 .word { position: absolute; min-width: 28px; max-width: 190px; transform: translate(-50%, -50%); border: 0; background: transparent; color: #11181c; font-size: var(--word-size, 16px); font-weight: 900; line-height: 1.12; text-align: center; outline: none; cursor: grab; user-select: text; overflow-wrap: anywhere; text-shadow: none; }
 .word:focus, .word.selected { outline: 2px solid rgba(22, 28, 32, 0.45); outline-offset: 3px; }
 .word.dragging { cursor: grabbing; }
-.center-dot { position: absolute; inset: 47.2%; z-index: 9; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff1a8 0 12%, #e9bf46 26%, var(--gold) 58%, #94630f 100%); color: #2b1b00; font-size: clamp(7px, 0.75vw, 10px); font-weight: 900; text-align: center; pointer-events: none; }
+.center-dot { position: absolute; inset: 47.2%; z-index: 9; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff1a8 0 12%, #e9bf46 26%, var(--gold) 58%, #94630f 100%); color: #2b1b00; font-size: clamp(5px, 0.5vw, 7px); line-height: 1; white-space: nowrap; letter-spacing: 0; font-weight: 900; text-align: center; pointer-events: none; }
 .target-toolbar, .view-toolbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; width: 100%; }
 .target-toolbar button, .view-toolbar button { min-height: 34px; padding: 7px 10px; font-size: 12px; }
 .add-green { color: #148339; } .add-yellow { color: #9d8400; } .add-red { color: #c22a12; }
