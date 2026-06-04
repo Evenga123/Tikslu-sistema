@@ -1,5 +1,5 @@
 :root {
-  --ivory: #f6f1df;
+  --ivory: #f7f0dc;
   --paper-line: rgba(52, 77, 85, 0.08);
   --gold: #d8a72f;
   --green: #6eda00;
@@ -16,8 +16,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(var(--paper-line) 1px, transparent 1px), linear-gradient(90deg, var(--paper-line) 1px, transparent 1px), var(--ivory);
-  background-size: 28px 28px;
+  background: var(--ivory);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
 }
