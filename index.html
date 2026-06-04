@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tikslų sistema</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="board">
+    <aside class="left-column">
+      <section class="headline" aria-label="Dienos kryptis">
+        <strong>Pažvelk į mane kasdien.</strong>
+        <b>Svajonės be tikslo yra tik svajonės.</b>
+      </section>
+
+      <section class="goal-panel panel">
+        <label for="goalText">Mano tikslas yra</label>
+        <textarea id="goalText" class="goal-title" data-note="goalText">Tikslų sistema, kuri padeda žmonėms pasiekti savo tikslą.</textarea>
+        <textarea class="date-note" data-note="goalDate">2026 Rugsėjo mėn. Šis tikslas jau yra pasiektas!!!</textarea>
+      </section>
+
+      <section aria-label="Veiksmų bankas">
+        <h2 class="bank-title">Senus veiksmus keisk naujais</h2>
+        <div class="action-bank">
+          <section class="zone-block green">
+            <div class="zone-head"><h3>Veda prie tikslo</h3><button class="mini-add" type="button" data-add-zone="green">+</button></div>
+            <div class="chip-list" data-zone-list="green"></div>
+          </section>
+          <section class="zone-block yellow">
+            <div class="zone-head"><h3>Neutrali zona</h3><button class="mini-add" type="button" data-add-zone="yellow">+</button></div>
+            <div class="chip-list" data-zone-list="yellow"></div>
+          </section>
+          <section class="zone-block red">
+            <div class="zone-head"><h3>Tolina nuo tikslo</h3><button class="mini-add" type="button" data-add-zone="red">+</button></div>
+            <div class="chip-list" data-zone-list="red"></div>
+          </section>
+        </div>
+      </section>
+    </aside>
+
+    <section class="center-column">
+      <div class="top-line"><strong>I DO IT NOW!</strong><div class="start-now">START NOW</div><strong>JUST DO IT!</strong></div>
+      <div class="stage">
+        <div class="target-shell">
+          <section class="target" id="target" aria-label="Tikslų taikinys">
+            <div class="ring red-ring"></div><div class="ring yellow-ring"></div><div class="ring green-ring"></div>
+            <div class="axis"></div><div class="word-layer" id="wordLayer"></div><div class="center-dot">TIKSLAS</div>
+          </section>
+        </div>
+        <div class="target-toolbar">
+          <button type="button" class="add-green" data-add-zone="green">Žalias veiksmas</button>
+          <button type="button" class="add-yellow" data-add-zone="yellow">Geltonas veiksmas</button>
+          <button type="button" class="add-red" data-add-zone="red">Raudonas veiksmas</button>
+        </div>
+        <div class="view-toolbar">
+          <button type="button" id="resetView">Atstatyti vaizdą</button>
+          <button type="button" id="clearWords">Išvalyti veiksmus</button>
+          <button type="button" id="print">Spausdinti</button>
+        </div>
+      </div>
+      <div class="bottom-line"><span>Nenuleisk rankų dėl mažų nesėkmių. Galvok apie pergalę. Siek jos!</span><span>Jei tikrai to noriu, manęs niekas nesustabdys.</span></div>
+    </section>
+
+    <aside class="right-column">
+      <h2 class="right-title">Koncentracija ties judėjimu į priekį</h2>
+      <section class="note-panel"><h3>Dėmesio kryptis</h3><textarea class="note-field" data-note="focusNotes">Matau, kaip ši sistema naudojasi milijonai klientų.
+Planuoju savo dienas ir laikausi plano.
+Kontroliuoju savo mintis, veiksmus ir emocijas.</textarea></section>
+      <section class="note-panel yellow"><h3>Dienos planas</h3><textarea class="note-field" data-note="dayPlan">Rytais susirašau svarbiausius veiksmus.
+Kasdien skiriu bent vieną veiksmą žaliai zonai.
+Vakare peržiūriu, kas veikė geriausiai.</textarea></section>
+      <section class="note-panel red"><h3>Stabdžiai, kuriuos keičiu</h3><textarea class="note-field" data-note="blockers">Atidėliojimas.
+Skrolinimas.
+Naktinėjimas.
+Neigiamos mintys.</textarea></section>
+      <section class="panel prompt-list">
+        <div class="prompt"><label>Jei dieną aš esu</label><textarea data-note="futureVision">Energingas, motyvuotas, smalsus, drąsus, atkaklus, proaktyvus.</textarea></div>
+        <div class="prompt"><label>Kas mane motyvuoja siekiant šio tikslo?</label><textarea data-note="motivation">Šeima, pinigai, laisvė, pažintys, galimybė padėti kitiems.</textarea></div>
+        <div class="prompt"><label>Ką esu pasiryžęs paaukoti dėl šio tikslo?</label><textarea data-note="sacrifice"></textarea></div>
+        <div class="prompt"><label>Kokie nauji geri įpročiai naudingi?</label><textarea data-note="habits">Planavimas, meditacija, dienoraščio rašymas, savikontrolė.</textarea></div>
+        <div class="prompt danger"><label>Kokių senų blogų įpročių atsisakyti?</label><textarea data-note="quit">Atidėliojimas, skrolinimas, naktinėjimas.</textarea></div>
+      </section>
+    </aside>
+
+    <div class="size-panel"><span>Pažymėto žodžio dydis</span><button type="button" id="decreaseWord">-</button><button type="button" id="increaseWord">+</button></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
