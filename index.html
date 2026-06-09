@@ -5,13 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tikslų sistema</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .prompt label { display: block; color: var(--blue); font-size: 12px; font-weight: 900; }
+    .motivation-phrase { cursor: pointer; }
+    body.dice-mode, body.dice-mode * { cursor: none !important; }
+    .phrase-dice {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 50;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(43, 27, 0, 0.8);
+      border-radius: 7px;
+      background: linear-gradient(145deg, #fff8d8, #d9aa31 58%, #9a6815);
+      color: #2b1b00;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 8px 18px rgba(31, 37, 40, 0.24);
+    }
+    .phrase-dice[hidden] { display: none; }
+  </style>
 </head>
 <body>
   <main class="board">
     <aside class="left-column">
       <section class="headline" aria-label="Dienos kryptis">
-        <strong>Pažvelk į mane kasdien.</strong>
-        <b>Svajonės be tikslo yra tik svajonės.</b>
+        <strong class="motivation-phrase" data-phrase-key="headlineDaily">Pažvelk į mane kasdien.</strong>
+        <b class="motivation-phrase" data-phrase-key="headlineDream">Svajonės be tikslo yra tik svajonės.</b>
       </section>
 
       <section class="goal-panel panel">
@@ -21,7 +47,7 @@
       </section>
 
       <section aria-label="Veiksmų bankas">
-        <h2 class="bank-title">Senus veiksmus keisk naujais</h2>
+        <h2 class="bank-title motivation-phrase" data-phrase-key="bankTitle">Senus veiksmus keisk naujais</h2>
         <div class="action-bank">
           <section class="zone-block green">
             <div class="zone-head"><h3>Veda prie tikslo</h3><button class="mini-add" type="button" data-add-zone="green">+</button></div>
@@ -40,7 +66,7 @@
     </aside>
 
     <section class="center-column">
-      <div class="top-line"><strong>I DO IT NOW!</strong><div class="start-now">START NOW</div><strong>JUST DO IT!</strong></div>
+      <div class="top-line"><strong class="motivation-phrase" data-phrase-key="topLeft">I DO IT NOW!</strong><div class="start-now motivation-phrase" data-phrase-key="topCenter">START NOW</div><strong class="motivation-phrase" data-phrase-key="topRight">JUST DO IT!</strong></div>
       <div class="stage">
         <div class="target-shell">
           <section class="target" id="target" aria-label="Tikslų taikinys">
@@ -55,11 +81,11 @@
           <button type="button" id="print">Spausdinti</button>
         </div>
       </div>
-      <div class="bottom-line"><span>Nenuleisk rankų dėl mažų nesėkmių. Galvok apie pergalę. Siek jos!</span><span>Jei tikrai to noriu, manęs niekas nesustabdys.</span></div>
+      <div class="bottom-line"><span class="motivation-phrase" data-phrase-key="bottomLeft">Nenuleisk rankų dėl mažų nesėkmių. Galvok apie pergalę. Siek jos!</span><span class="motivation-phrase" data-phrase-key="bottomRight">Jei tikrai to noriu, manęs niekas nesustabdys.</span></div>
     </section>
 
     <aside class="right-column">
-      <h2 class="right-title">Koncentracija ties judėjimu į priekį</h2>
+      <h2 class="right-title motivation-phrase" data-phrase-key="rightTitle">Koncentracija ties judėjimu į priekį</h2>
       <section class="note-panel"><h3>Dėmesio kryptis</h3><textarea class="note-field" data-note="focusNotes">Matau, kaip ši sistema naudojasi milijonai klientų.
 Planuoju savo dienas ir laikausi plano.
 Kontroliuoju savo mintis, veiksmus ir emocijas.</textarea></section>
@@ -80,7 +106,121 @@ Neigiamos mintys.</textarea></section>
     </aside>
 
     <div class="size-panel"><span>Pažymėto žodžio dydis</span><button type="button" id="decreaseWord">-</button><button type="button" id="increaseWord">+</button></div>
+    <button type="button" id="phraseDice" class="phrase-dice" aria-label="Pakeisti frazę" hidden>?</button>
   </main>
   <script src="app.js"></script>
+  <script>
+    (() => {
+      const phraseStorageKey = "tikslu-sistema-frazes-v1";
+      const motivationLibrary = [
+        "Veik dabar.",
+        "Vienas žingsnis šiandien.",
+        "Mažai, bet kasdien.",
+        "Rinkis veiksmą.",
+        "Judėk į priekį.",
+        "Dėmesys kuria rezultatą.",
+        "Tikslas laukia veiksmo.",
+        "Pradėk nuo mažo.",
+        "Šiandien yra pradžia.",
+        "Daryk, kol aišku.",
+        "Žalia zona šiandien.",
+        "Kryptis svarbiau už greitį.",
+        "Sustok tik pasiekęs.",
+        "Mažas veiksmas laimi.",
+        "Grįžk prie tikslo.",
+        "Energiją skirk tikslui.",
+        "Pasirink tai, kas veda.",
+        "Venk to, kas tolina.",
+        "Tavo dėmesys yra jėga.",
+        "Kasdien geriau nei kartais.",
+        "Nesiderėk su atidėliojimu.",
+        "Planą paversk veiksmu.",
+        "Dabar yra geriausias laikas.",
+        "Laikyk kryptį.",
+        "Vienas veiksmas keičia dieną.",
+        "Tyliai, bet pirmyn.",
+        "Rinkis pažangą.",
+        "Pradėk prieš norą atidėti.",
+        "Tikslas auga per veiksmą.",
+        "Šiandien rinkis žalią."
+      ];
+      const phraseDice = document.getElementById("phraseDice");
+      const undoButton = document.getElementById("undoAction");
+      let activePhrase = null;
+      let phraseTexts = JSON.parse(localStorage.getItem(phraseStorageKey) || "{}");
+      let defaultPhraseTexts = {};
+      let phraseUndoStack = [];
+
+      function savePhrases() { localStorage.setItem(phraseStorageKey, JSON.stringify(phraseTexts)); }
+      function updateUndoButton() { if (undoButton) undoButton.disabled = phraseUndoStack.length === 0; }
+      function applyPhraseTexts() {
+        document.querySelectorAll("[data-phrase-key]").forEach((item) => {
+          const key = item.dataset.phraseKey;
+          if (!defaultPhraseTexts[key]) defaultPhraseTexts[key] = item.textContent.trim();
+          item.textContent = phraseTexts[key] || defaultPhraseTexts[key];
+        });
+      }
+      function movePhraseDice(x, y) { phraseDice.style.left = `${x}px`; phraseDice.style.top = `${y}px`; }
+      function showPhraseDice(item, x, y) {
+        activePhrase = item;
+        phraseDice.hidden = false;
+        document.body.classList.add("dice-mode");
+        movePhraseDice(x, y);
+      }
+      function hidePhraseDice() {
+        activePhrase = null;
+        phraseDice.hidden = true;
+        document.body.classList.remove("dice-mode");
+      }
+      function pickMotivationPhrase(currentText) {
+        const current = currentText.trim();
+        const options = motivationLibrary.filter((phrase) => phrase !== current);
+        return options[Math.floor(Math.random() * options.length)] || current;
+      }
+      function replaceActivePhrase() {
+        if (!activePhrase) return;
+        phraseUndoStack.push({ ...phraseTexts });
+        const key = activePhrase.dataset.phraseKey;
+        const nextPhrase = pickMotivationPhrase(activePhrase.textContent);
+        activePhrase.textContent = nextPhrase;
+        phraseTexts[key] = nextPhrase;
+        savePhrases();
+        updateUndoButton();
+        hidePhraseDice();
+      }
+
+      applyPhraseTexts();
+      document.querySelectorAll("[data-phrase-key]").forEach((item) => {
+        item.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          showPhraseDice(item, event.clientX, event.clientY);
+        });
+      });
+      phraseDice.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        replaceActivePhrase();
+      });
+      document.addEventListener("pointermove", (event) => {
+        if (activePhrase) movePhraseDice(event.clientX, event.clientY);
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".phrase-dice") || event.target.closest("[data-phrase-key]")) return;
+        hidePhraseDice();
+      });
+      if (undoButton) {
+        undoButton.addEventListener("click", () => {
+          if (!phraseUndoStack.length) return;
+          phraseTexts = phraseUndoStack.pop();
+          savePhrases();
+          applyPhraseTexts();
+          hidePhraseDice();
+          updateUndoButton();
+        });
+      }
+      updateUndoButton();
+    })();
+  </script>
 </body>
 </html>
