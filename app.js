@@ -399,3 +399,38 @@ target.addEventListener("pointerup", (event) => {
 
 window.addEventListener("resize", updateAllWordSizes);
 document.getElementById("print").addEventListener("click", () => window.print());
+
+(() => {
+  const board = document.querySelector(".board");
+  const scaleStorageKey = `${wordsStorageKey}-mastelis`;
+  let boardScale = Number(localStorage.getItem(scaleStorageKey) || 1);
+
+  function applyBoardScale(save = true) {
+    targetScale = boardScale;
+    board.style.transform = `scale(${boardScale})`;
+    board.style.transformOrigin = "top center";
+    target.style.setProperty("--target-scale", 1);
+    if (save) localStorage.setItem(scaleStorageKey, String(boardScale));
+    updateAllWordSizes();
+  }
+
+  applyBoardScale(false);
+
+  document.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const nextScale = clamp(boardScale + (event.deltaY < 0 ? 0.08 : -0.08), 0.65, 2.2);
+    if (nextScale === boardScale) return;
+    setTimeout(() => {
+      boardScale = nextScale;
+      applyBoardScale();
+    }, 0);
+  }, { capture: true, passive: false });
+
+  document.getElementById("resetView").addEventListener("click", () => {
+    setTimeout(() => {
+      boardScale = 1;
+      applyBoardScale();
+    }, 0);
+  });
+})();
