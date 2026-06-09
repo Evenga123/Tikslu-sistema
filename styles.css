@@ -105,20 +105,20 @@ prompt label { display: block; color: var(--blue); font-size: 12px; font-weight:
 
 .axis::before, .axis::after {
   display: block !important;
-  background: rgba(255, 255, 255, 0.86) !important;
-  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.18));
+  background: rgba(255, 255, 255, 0.42) !important;
+  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.08));
 }
 .axis::before {
   left: 0 !important;
   top: 50% !important;
   width: 100% !important;
-  height: 2px !important;
+  height: 1px !important;
   transform: translateY(-50%) !important;
 }
 .axis::after {
   left: 50% !important;
   top: 0 !important;
-  width: 2px !important;
+  width: 1px !important;
   height: 100% !important;
   transform: translateX(-50%) !important;
 }
@@ -127,12 +127,20 @@ prompt label { display: block; color: var(--blue); font-size: 12px; font-weight:
   height: 0 !important;
   background: transparent !important;
   border-radius: 0 !important;
-  border-top: 5px solid transparent !important;
-  border-bottom: 5px solid transparent !important;
-  border-left: 8px solid rgba(255, 255, 255, 0.9) !important;
-  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.2)) !important;
+  border-top: 4px solid transparent !important;
+  border-bottom: 4px solid transparent !important;
+  border-left: 7px solid rgba(255, 255, 255, 0.62) !important;
+  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.1)) !important;
 }
 .direction-arrow::after { display: none !important; }
+.axis .direction-arrow:nth-child(1) { --y: 3% !important; }
+.axis .direction-arrow:nth-child(2) { --x: 97% !important; }
+.axis .direction-arrow:nth-child(3) { --y: 97% !important; }
+.axis .direction-arrow:nth-child(4) { --x: 3% !important; }
+.axis .direction-arrow:nth-child(5) { --y: 46.6% !important; }
+.axis .direction-arrow:nth-child(6) { --x: 53.4% !important; }
+.axis .direction-arrow:nth-child(7) { --y: 53.4% !important; }
+.axis .direction-arrow:nth-child(8) { --x: 46.6% !important; }
 
 @media (max-width: 1180px) { .board { grid-template-columns: 1fr; } .left-column, .right-column { grid-template-columns: repeat(2, minmax(260px, 1fr)); } }
 @media (max-width: 720px) { .board { padding: 10px; } .left-column, .right-column { grid-template-columns: 1fr; } .top-line { grid-template-columns: 1fr; } .bottom-line { display: grid; } .size-panel { right: 10px; left: 10px; justify-content: center; } }
