@@ -1,7 +1,9 @@
 const wordsStorageKey = "tikslu-taikinys-laisvi-zodziai";
 const notesStorageKey = "tikslu-sistema-uzrasai-v1";
+const board = document.querySelector(".board");
 const target = document.getElementById("target");
 const layer = document.getElementById("wordLayer");
+
 let words = JSON.parse(localStorage.getItem(wordsStorageKey) || "[]");
 let notes = JSON.parse(localStorage.getItem(notesStorageKey) || "{}");
 let activeWord = null;
@@ -17,16 +19,26 @@ function saveNotes() { localStorage.setItem(notesStorageKey, JSON.stringify(note
 function clamp(value, min, max) { return Math.min(Math.max(value, min), max); }
 function capitalizeFirst(text) { const trimmed = text.trim(); return trimmed ? trimmed.charAt(0).toLocaleUpperCase("lt-LT") + trimmed.slice(1) : ""; }
 
-function updateTargetScale(save = true) {
-  target.style.setProperty("--target-scale", targetScale);
-  if (save) localStorage.setItem(`${wordsStorageKey}-mastelis`, String(targetScale));
+function applyViewTransform(saveScale = true, savePan = true) {
+  targetScale = clamp(Number(targetScale) || 1, 0.65, 2.2);
+  targetPan = {
+    x: Number.isFinite(targetPan?.x) ? targetPan.x : 0,
+    y: Number.isFinite(targetPan?.y) ? targetPan.y : 0
+  };
+  board.style.transform = `matrix(${targetScale}, 0, 0, ${targetScale}, ${targetPan.x}, ${targetPan.y})`;
+  board.style.transformOrigin = "0 0";
+  board.style.setProperty("--board-scale", targetScale);
+  board.style.setProperty("--board-pan-x", targetPan.x);
+  board.style.setProperty("--board-pan-y", targetPan.y);
+  target.style.setProperty("--target-scale", 1);
+  target.style.setProperty("--target-pan-x", "0px");
+  target.style.setProperty("--target-pan-y", "0px");
+  if (saveScale) localStorage.setItem(`${wordsStorageKey}-mastelis`, String(targetScale));
+  if (savePan) localStorage.setItem(`${wordsStorageKey}-slinkimas`, JSON.stringify(targetPan));
 }
 
-function updateTargetPan(save = true) {
-  target.style.setProperty("--target-pan-x", `${targetPan.x}px`);
-  target.style.setProperty("--target-pan-y", `${targetPan.y}px`);
-  if (save) localStorage.setItem(`${wordsStorageKey}-slinkimas`, JSON.stringify(targetPan));
-}
+function updateTargetScale(save = true) { applyViewTransform(save, false); }
+function updateTargetPan(save = true) { applyViewTransform(false, save); }
 
 function pointInsideTarget(x, y) {
   const dx = x - 50;
@@ -125,7 +137,7 @@ function updateAllWordSizes() {
     const data = words.find((word) => word.id === item.dataset.id);
     if (!data) return;
     const zone = data.zone || getZone(data.x, data.y);
-    const scale = clamp(target.getBoundingClientRect().width / 700, 0.78, 1.2);
+    const scale = clamp(target.offsetWidth / 700, 0.78, 1.2);
     const size = clamp((getAutoSize(zone, counts[zone]) + (data.sizeDelta || 0)) * scale, 8, 30);
     item.style.setProperty("--word-size", `${size}px`);
   });
@@ -371,66 +383,45 @@ document.addEventListener("pointerdown", (event) => {
   clearSelectedWord();
 });
 
-target.addEventListener("wheel", (event) => {
+document.addEventListener("wheel", (event) => {
   event.preventDefault();
-  targetScale = clamp(targetScale + (event.deltaY < 0 ? 0.08 : -0.08), 0.65, 2.2);
+  const direction = event.deltaY < 0 ? 1 : -1;
+  const previousScale = targetScale;
+  const nextScale = clamp(previousScale + direction * 0.08, 0.65, 2.2);
+  if (nextScale === previousScale) return;
+
+  const boardRect = board.getBoundingClientRect();
+  const pointerX = (event.clientX - boardRect.left) / previousScale;
+  const pointerY = (event.clientY - boardRect.top) / previousScale;
+
+  targetPan = {
+    x: targetPan.x - pointerX * (nextScale - previousScale),
+    y: targetPan.y - pointerY * (nextScale - previousScale)
+  };
+  targetScale = nextScale;
   updateTargetScale();
+  updateTargetPan();
 }, { passive: false });
 
-target.addEventListener("contextmenu", (event) => event.preventDefault());
-target.addEventListener("pointerdown", (event) => {
+board.addEventListener("contextmenu", (event) => event.preventDefault());
+board.addEventListener("pointerdown", (event) => {
   if (event.button !== 2) return;
   event.preventDefault();
   clearSelectedWord();
   panStart = { x: event.clientX, y: event.clientY, panX: targetPan.x, panY: targetPan.y };
-  target.setPointerCapture(event.pointerId);
+  board.setPointerCapture(event.pointerId);
 });
-target.addEventListener("pointermove", (event) => {
+board.addEventListener("pointermove", (event) => {
   if (!panStart) return;
   targetPan = { x: panStart.panX + event.clientX - panStart.x, y: panStart.panY + event.clientY - panStart.y };
   updateTargetPan(false);
 });
-target.addEventListener("pointerup", (event) => {
+board.addEventListener("pointerup", (event) => {
   if (!panStart) return;
-  target.releasePointerCapture(event.pointerId);
+  board.releasePointerCapture(event.pointerId);
   panStart = null;
   updateTargetPan();
 });
 
 window.addEventListener("resize", updateAllWordSizes);
 document.getElementById("print").addEventListener("click", () => window.print());
-
-(() => {
-  const board = document.querySelector(".board");
-  const scaleStorageKey = `${wordsStorageKey}-mastelis`;
-  let boardScale = Number(localStorage.getItem(scaleStorageKey) || 1);
-
-  function applyBoardScale(save = true) {
-    targetScale = boardScale;
-    board.style.transform = `scale(${boardScale})`;
-    board.style.transformOrigin = "top center";
-    target.style.setProperty("--target-scale", 1);
-    if (save) localStorage.setItem(scaleStorageKey, String(boardScale));
-    updateAllWordSizes();
-  }
-
-  applyBoardScale(false);
-
-  document.addEventListener("wheel", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const nextScale = clamp(boardScale + (event.deltaY < 0 ? 0.08 : -0.08), 0.65, 2.2);
-    if (nextScale === boardScale) return;
-    setTimeout(() => {
-      boardScale = nextScale;
-      applyBoardScale();
-    }, 0);
-  }, { capture: true, passive: false });
-
-  document.getElementById("resetView").addEventListener("click", () => {
-    setTimeout(() => {
-      boardScale = 1;
-      applyBoardScale();
-    }, 0);
-  });
-})();
