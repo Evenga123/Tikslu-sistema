@@ -145,14 +145,11 @@ Neigiamos mintys.</textarea></section>
         "Šiandien rinkis žalią."
       ];
       const phraseDice = document.getElementById("phraseDice");
-      const undoButton = document.getElementById("undoAction");
       let activePhrase = null;
       let phraseTexts = JSON.parse(localStorage.getItem(phraseStorageKey) || "{}");
       let defaultPhraseTexts = {};
-      let phraseUndoStack = [];
 
       function savePhrases() { localStorage.setItem(phraseStorageKey, JSON.stringify(phraseTexts)); }
-      function updateUndoButton() { if (undoButton) undoButton.disabled = phraseUndoStack.length === 0; }
       function applyPhraseTexts() {
         document.querySelectorAll("[data-phrase-key]").forEach((item) => {
           const key = item.dataset.phraseKey;
@@ -179,13 +176,11 @@ Neigiamos mintys.</textarea></section>
       }
       function replaceActivePhrase() {
         if (!activePhrase) return;
-        phraseUndoStack.push({ ...phraseTexts });
         const key = activePhrase.dataset.phraseKey;
         const nextPhrase = pickMotivationPhrase(activePhrase.textContent);
         activePhrase.textContent = nextPhrase;
         phraseTexts[key] = nextPhrase;
         savePhrases();
-        updateUndoButton();
         hidePhraseDice();
       }
 
@@ -209,16 +204,118 @@ Neigiamos mintys.</textarea></section>
         if (event.target.closest(".phrase-dice") || event.target.closest("[data-phrase-key]")) return;
         hidePhraseDice();
       });
-      if (undoButton) {
-        undoButton.addEventListener("click", () => {
-          if (!phraseUndoStack.length) return;
-          phraseTexts = phraseUndoStack.pop();
-          savePhrases();
-          applyPhraseTexts();
-          hidePhraseDice();
-          updateUndoButton();
-        });
+      window.tiksluApplyPhraseTexts = applyPhraseTexts;
+      window.tiksluHidePhraseDice = hidePhraseDice;
+    })();
+  </script>
+  <script>
+    (() => {
+      const wordsKey = "tikslu-taikinys-laisvi-zodziai";
+      const phraseKey = "tikslu-sistema-frazes-v1";
+      const scaleKey = `${wordsKey}-mastelis`;
+      const panKey = `${wordsKey}-slinkimas`;
+      const undoButton = document.getElementById("undoAction");
+      let undoStack = [];
+      let pendingSnapshot = null;
+
+      function readSnapshot() {
+        return {
+          words: localStorage.getItem(wordsKey),
+          scale: localStorage.getItem(scaleKey),
+          pan: localStorage.getItem(panKey),
+          phrases: localStorage.getItem(phraseKey)
+        };
       }
+
+      function writeKey(key, value) {
+        if (value === null || value === undefined) localStorage.removeItem(key);
+        else localStorage.setItem(key, value);
+      }
+
+      function sameSnapshot(first, second) {
+        return JSON.stringify(first) === JSON.stringify(second);
+      }
+
+      function updateUndoButton() {
+        if (undoButton) undoButton.disabled = undoStack.length === 0;
+      }
+
+      function pushSnapshotIfChanged(before) {
+        if (!before || sameSnapshot(before, readSnapshot())) return;
+        const previous = undoStack[undoStack.length - 1];
+        if (!previous || !sameSnapshot(previous, before)) {
+          undoStack.push(before);
+          if (undoStack.length > 50) undoStack.shift();
+        }
+        updateUndoButton();
+      }
+
+      function beginSnapshot() {
+        if (!pendingSnapshot) pendingSnapshot = readSnapshot();
+      }
+
+      function finishSnapshot(before = pendingSnapshot) {
+        pendingSnapshot = null;
+        setTimeout(() => pushSnapshotIfChanged(before), 0);
+      }
+
+      function restoreSnapshot(snapshot) {
+        writeKey(wordsKey, snapshot.words);
+        writeKey(scaleKey, snapshot.scale);
+        writeKey(panKey, snapshot.pan);
+        writeKey(phraseKey, snapshot.phrases);
+        window.location.reload();
+      }
+
+      function isTrackedTarget(target) {
+        return Boolean(target.closest(
+          ".word, #target, [data-add-zone], #clearWords, #resetView, #decreaseWord, #increaseWord, .phrase-dice, [data-phrase-key]"
+        ));
+      }
+
+      if (undoButton) {
+        undoButton.addEventListener("click", (event) => {
+          if (!undoStack.length) return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          restoreSnapshot(undoStack.pop());
+        }, true);
+      }
+
+      document.addEventListener("focusin", (event) => {
+        if (event.target.closest(".word")) beginSnapshot();
+      }, true);
+
+      document.addEventListener("input", (event) => {
+        if (event.target.closest(".word")) finishSnapshot();
+      }, true);
+
+      document.addEventListener("pointerdown", (event) => {
+        if (event.target.closest("#undoAction")) return;
+        if (isTrackedTarget(event.target)) beginSnapshot();
+      }, true);
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("#undoAction")) return;
+        if (isTrackedTarget(event.target)) finishSnapshot();
+      }, true);
+
+      document.addEventListener("dblclick", (event) => {
+        if (!event.target.closest("#target")) return;
+        const before = readSnapshot();
+        setTimeout(() => pushSnapshotIfChanged(before), 0);
+      }, true);
+
+      document.addEventListener("pointerup", () => {
+        if (pendingSnapshot) finishSnapshot();
+      }, true);
+
+      document.addEventListener("wheel", (event) => {
+        if (!event.target.closest("#target")) return;
+        const before = readSnapshot();
+        setTimeout(() => pushSnapshotIfChanged(before), 0);
+      }, true);
+
       updateUndoButton();
     })();
   </script>
