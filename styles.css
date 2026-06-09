@@ -103,6 +103,37 @@ prompt label { display: block; color: var(--blue); font-size: 12px; font-weight:
 .size-panel span { max-width: 112px; color: rgba(31, 37, 40, 0.74); font-size: 12px; font-weight: 800; line-height: 1.12; }
 .size-panel button { width: 34px; height: 34px; padding: 0; font-size: 20px; line-height: 1; }
 
+.axis::before, .axis::after {
+  display: block !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.18));
+}
+.axis::before {
+  left: 0 !important;
+  top: 50% !important;
+  width: 100% !important;
+  height: 2px !important;
+  transform: translateY(-50%) !important;
+}
+.axis::after {
+  left: 50% !important;
+  top: 0 !important;
+  width: 2px !important;
+  height: 100% !important;
+  transform: translateX(-50%) !important;
+}
+.direction-arrow {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  border-top: 5px solid transparent !important;
+  border-bottom: 5px solid transparent !important;
+  border-left: 8px solid rgba(255, 255, 255, 0.9) !important;
+  filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.2)) !important;
+}
+.direction-arrow::after { display: none !important; }
+
 @media (max-width: 1180px) { .board { grid-template-columns: 1fr; } .left-column, .right-column { grid-template-columns: repeat(2, minmax(260px, 1fr)); } }
 @media (max-width: 720px) { .board { padding: 10px; } .left-column, .right-column { grid-template-columns: 1fr; } .top-line { grid-template-columns: 1fr; } .bottom-line { display: grid; } .size-panel { right: 10px; left: 10px; justify-content: center; } }
 @media print { body { background: var(--ivory); } .board { width: 100%; min-height: 0; padding: 6px; grid-template-columns: 0.75fr 1.35fr 0.9fr; gap: 8px; } .target-toolbar, .view-toolbar, .size-panel, .mini-add { display: none; } .target { transform: none; } .word:focus, .word.selected { outline: none; } }
