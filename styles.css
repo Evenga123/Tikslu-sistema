@@ -212,11 +212,11 @@ body.dice-mode * {
 }
 
 .zone-block.green {
-  background: color-mix(in srgb, var(--green) 66%, white);
+  background: linear-gradient(180deg, #6eda00 0%, #8ee038 56%, #bee987 100%);
 }
 
 .zone-block.yellow {
-  background: color-mix(in srgb, var(--yellow) 74%, white);
+  background: linear-gradient(180deg, #ffec00 0%, #fff35c 56%, #fff7a2 100%);
 }
 
 .zone-block.red {
