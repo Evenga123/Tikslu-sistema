@@ -67,6 +67,11 @@
       gap: 12px;
     }
 
+    .left-column {
+      min-height: calc(100vh - 34px);
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+
     .headline {
       display: grid;
       gap: 18px;
@@ -182,9 +187,16 @@
       text-transform: uppercase;
     }
 
+    .left-column > section:last-child {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
     .action-bank {
       display: grid;
-      grid-template-rows: repeat(3, minmax(124px, 1fr));
+      min-height: 100%;
+      grid-template-rows: repeat(3, minmax(170px, 1fr));
       gap: 0;
       border: 2px solid rgba(22, 28, 32, 0.05);
       border-radius: 6px;
@@ -192,7 +204,7 @@
     }
 
     .zone-block {
-      min-height: 124px;
+      min-height: 170px;
       padding: 12px 12px 11px;
       display: grid;
       grid-template-rows: auto 1fr;
