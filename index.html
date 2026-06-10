@@ -30,33 +30,6 @@
       box-shadow: 0 8px 18px rgba(31, 37, 40, 0.24);
     }
     .phrase-dice[hidden] { display: none; }
-    .axis::before, .axis::after { display: none; }
-    .direction-arrow {
-      position: absolute;
-      left: var(--x);
-      top: var(--y);
-      width: var(--arrow-width, 24px);
-      height: 3px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.86);
-      transform: translate(-50%, -50%) rotate(var(--angle));
-      transform-origin: center center;
-      filter: drop-shadow(0 1px 1px rgba(31, 37, 40, 0.18));
-    }
-    .direction-arrow::after {
-      content: "";
-      position: absolute;
-      right: -1px;
-      top: 50%;
-      width: 0;
-      height: 0;
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      border-left: 9px solid rgba(255, 255, 255, 0.86);
-      transform: translateY(-50%);
-    }
-    .direction-arrow.green { --arrow-width: 18px; background: rgba(255, 255, 255, 0.78); }
-    .direction-arrow.green::after { border-left-color: rgba(255, 255, 255, 0.78); }
   </style>
 </head>
 <body>
@@ -92,21 +65,29 @@
     </aside>
 
     <section class="center-column">
-      <div class="top-line"><strong class="motivation-phrase" data-phrase-key="topLeft">I DO IT NOW!</strong><div class="start-now motivation-phrase" data-phrase-key="topCenter">START NOW</div><strong class="motivation-phrase" data-phrase-key="topRight">JUST DO IT!</strong></div>
+      <div class="top-line">
+        <strong class="motivation-phrase" data-phrase-key="topLeft">I DO IT NOW!</strong>
+        <div class="start-now motivation-phrase" data-phrase-key="topCenter">START NOW</div>
+        <strong class="motivation-phrase" data-phrase-key="topRight">JUST DO IT!</strong>
+      </div>
       <div class="stage">
         <div class="target-shell">
           <section class="target" id="target" aria-label="Tikslų taikinys">
-            <div class="ring red-ring"></div><div class="ring yellow-ring"></div><div class="ring green-ring"></div>
+            <div class="ring red-ring"></div>
+            <div class="ring yellow-ring"></div>
+            <div class="ring green-ring"></div>
             <div class="axis" aria-hidden="true">
-              <span class="direction-arrow red" style="--x: 50%; --y: 8%; --angle: -90deg;"></span>
-              <span class="direction-arrow red" style="--x: 92%; --y: 50%; --angle: 0deg;"></span>
-              <span class="direction-arrow red" style="--x: 50%; --y: 92%; --angle: 90deg;"></span>
-              <span class="direction-arrow red" style="--x: 8%; --y: 50%; --angle: 180deg;"></span>
-              <span class="direction-arrow green" style="--x: 50%; --y: 44%; --angle: 90deg;"></span>
-              <span class="direction-arrow green" style="--x: 56%; --y: 50%; --angle: 180deg;"></span>
-              <span class="direction-arrow green" style="--x: 50%; --y: 56%; --angle: -90deg;"></span>
-              <span class="direction-arrow green" style="--x: 44%; --y: 50%; --angle: 0deg;"></span>
-            </div><div class="word-layer" id="wordLayer"></div><div class="center-dot">TIKSLAS</div>
+              <span class="direction-arrow red" style="--x: 50%; --y: 2.6%; --angle: -90deg;"></span>
+              <span class="direction-arrow red" style="--x: 97.4%; --y: 50%; --angle: 0deg;"></span>
+              <span class="direction-arrow red" style="--x: 50%; --y: 97.4%; --angle: 90deg;"></span>
+              <span class="direction-arrow red" style="--x: 2.6%; --y: 50%; --angle: 180deg;"></span>
+              <span class="direction-arrow green" style="--x: 50%; --y: 46.9%; --angle: 90deg;"></span>
+              <span class="direction-arrow green" style="--x: 53.1%; --y: 50%; --angle: 180deg;"></span>
+              <span class="direction-arrow green" style="--x: 50%; --y: 53.1%; --angle: -90deg;"></span>
+              <span class="direction-arrow green" style="--x: 46.9%; --y: 50%; --angle: 0deg;"></span>
+            </div>
+            <div class="word-layer" id="wordLayer"></div>
+            <div class="center-dot">TIKSLAS</div>
           </section>
         </div>
         <div class="view-toolbar">
@@ -116,7 +97,10 @@
           <button type="button" id="print">Spausdinti</button>
         </div>
       </div>
-      <div class="bottom-line"><span class="motivation-phrase" data-phrase-key="bottomLeft">Nenuleisk rankų dėl mažų nesėkmių. Galvok apie pergalę. Siek jos!</span><span class="motivation-phrase" data-phrase-key="bottomRight">Jei tikrai to noriu, manęs niekas nesustabdys.</span></div>
+      <div class="bottom-line">
+        <span class="motivation-phrase" data-phrase-key="bottomLeft">Nenuleisk rankų dėl mažų nesėkmių. Galvok apie pergalę. Siek jos!</span>
+        <span class="motivation-phrase" data-phrase-key="bottomRight">Jei tikrai to noriu, manęs niekas nesustabdys.</span>
+      </div>
     </section>
 
     <aside class="right-column">
