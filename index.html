@@ -28,6 +28,7 @@
       font-weight: 900;
       line-height: 1;
       box-shadow: 0 8px 18px rgba(31, 37, 40, 0.24);
+      pointer-events: auto;
     }
     .phrase-dice[hidden] { display: none; }
   </style>
@@ -205,17 +206,17 @@ Neigiamos mintys.</textarea></section>
 
       applyPhraseTexts();
       document.querySelectorAll("[data-phrase-key]").forEach((item) => {
-        item.addEventListener("click", (event) => {
+        item.addEventListener("pointerdown", (event) => {
           event.preventDefault();
-          event.stopPropagation();
+          event.stopImmediatePropagation();
           showPhraseDice(item, event.clientX, event.clientY);
-        });
+        }, true);
       });
-      phraseDice.addEventListener("click", (event) => {
+      phraseDice.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-        event.stopPropagation();
+        event.stopImmediatePropagation();
         replaceActivePhrase();
-      });
+      }, true);
       document.addEventListener("pointermove", (event) => {
         if (activePhrase) movePhraseDice(event.clientX, event.clientY);
       });
